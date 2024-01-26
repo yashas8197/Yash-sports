@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html"><strong>ICC Player Management</strong></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="nav justify-content-end collapse navbar-collapse" id="navbarNav">
+          <div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0"">
+                  <li class=" nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#playersList">Players List</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="addPlayers.html">Add Players</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Players List</h1>
+
+    <label class="my-2">Filter by Playing Role:</label>
+    <select class="form-select" id="filterRole">
+      <option value="All">All</option>
+      <option value="Batsman">Batsman</option>
+      <option value="All-Rounder">All-Rounder</option>
+      <option value="Bowler">Bowler</option>
+    </select>
+    <br><br>
+
+
+    <ul id="playersList"></ul>
+
+
+
+
+
+  </main>
+
+  <script>
+    const playersList = document.querySelector("#playersList")
+    const API_URL = 'https://players-backend-student-neog-ca.replit.app/players'
+    const playersData = []
+    function fetchData() {
+
+      return fetch(API_URL)
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          createListCard(data)
+          playersData.push(data)
+        })
+    }
+
+
+    function createListCard(data) {
+      playersList.innerHTML = " "
+      for (let i = 0; i < data.length; i++) {
+        const listElement = document.createElement('li')
+
+        listElement.className = 'list-group-item'
+
+        listElement.innerHTML = `${data[i].fullName} - Playing Role: ${data[i].playingRole} - Nationality ${data[i].nationality}`
+
+        playersList.appendChild(listElement)
+      }
+    }
+
+
+
+    const filterRole = document.querySelector("#filterRole")
+
+    filterRole.addEventListener('change', applyFilterRole)
+
+    function applyFilterRole() {
+      const selectedRole = filterRole.value
+      const filteredPlayers = []
+
+      if (selectedRole !== "All") {
+        for (let i = 0; i < playersData[0].length; i++) {
+          if (playersData[0][i].playingRole === selectedRole) {
+            filteredPlayers.push(playersData[0][i])
+          }
+        }
+        createListCard(filteredPlayers)
+      } else {
+        createListCard(playersData[0])
+      }
+
+    }
+
+    fetchData()  
+  </script>
+</body>
+
+</html>
